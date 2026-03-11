@@ -1,0 +1,108 @@
+{
+  "NexaAuth": {
+    "current_version": "3.2.1",
+    "active_incident": null,
+    "changelog": {
+      "3.2.1": "Fixed clock skew tolerance in JWT validation; improved token cache invalidation on key rotation",
+      "3.2.0": "Added OAuth2 PKCE support; rate limit headers now included in all 429 responses",
+      "3.1.2": "Patched token expiry miscalculation when token_lifetime < 300s",
+      "3.1.1": "Security patch for scope validation bypass (CVE-2025-4471)"
+    },
+    "known_bugs": {
+      "3.1.0": [
+        "Token cache not invalidated on API key rotation — fixed in 3.2.1",
+        "Clock skew tolerance set to 0s — fixed in 3.2.1"
+      ],
+      "3.1.2": [
+        "Rate limit counter not reset after key rotation — fixed in 3.2.0"
+      ]
+    },
+    "engineering_contact": "nexaauth-eng@nexacloud.io",
+    "status_page": "https://status.nexacloud.io/nexaauth",
+    "docs_url": "https://docs.nexacloud.io/nexaauth",
+    "config_reference": {
+      "token_lifetime": "Default 3600s. Set via PATCH /v2/auth/config",
+      "clock_skew_tolerance": "Default 300s in >=3.2.1. Configurable via {clock_skew_seconds}",
+      "cache_ttl": "Token cache TTL defaults to token_lifetime. Clear via DELETE /v2/auth/tokens/cache"
+    }
+  },
+  "NexaStore": {
+    "current_version": "2.4.0",
+    "active_incident": null,
+    "changelog": {
+      "2.4.0": "Added multipart upload support; improved CORS pre-flight caching",
+      "2.3.5": "Fixed 403 on presigned URL expiry edge case",
+      "2.3.0": "New bucket policy engine; deprecated legacy ACL system"
+    },
+    "known_bugs": {
+      "2.3.0": [
+        "Legacy ACL migration not automatic — manual step required after upgrade",
+        "CORS wildcard origin rejected in strict mode — use explicit origin list"
+      ]
+    },
+    "engineering_contact": "nexastore-eng@nexacloud.io",
+    "status_page": "https://status.nexacloud.io/nexastore",
+    "docs_url": "https://docs.nexacloud.io/nexastore",
+    "config_reference": {
+      "cors_origins": "Set via PUT /v2/store/buckets/{id}/cors — array of allowed origins",
+      "bucket_policy": "JSON policy document. Set via PUT /v2/store/buckets/{id}/policy",
+      "presigned_url_ttl": "Default 3600s. Max 604800s (7 days)"
+    }
+  },
+  "NexaMsg": {
+    "current_version": "1.8.2",
+    "active_incident": {
+      "incident_id": "INC-2026-0310",
+      "title": "NexaMsg webhook delivery degraded — EU-WEST region",
+      "status": "investigating",
+      "started_at": "2026-03-10T11:30:00Z",
+      "affected_regions": ["EU-WEST"],
+      "impact": "Webhook delivery delayed 15-45 minutes for events in EU-WEST region. Message queuing unaffected.",
+      "engineering_lead": "Carlos Méndez",
+      "last_update": "2026-03-10T13:00:00Z",
+      "next_update": "2026-03-10T15:00:00Z",
+      "workaround": "Use webhook retry endpoint to manually trigger redelivery: POST /v2/msg/webhooks/{id}/retry"
+    },
+    "changelog": {
+      "1.8.2": "Improved webhook retry backoff; added delivery receipt events",
+      "1.8.0": "New message filtering API; added per-topic rate limits",
+      "1.7.5": "Fixed duplicate message delivery on network timeout"
+    },
+    "known_bugs": {
+      "1.7.5": [
+        "Webhook signature validation fails for payloads > 1MB — fixed in 1.8.0"
+      ]
+    },
+    "engineering_contact": "nexamsg-eng@nexacloud.io",
+    "status_page": "https://status.nexacloud.io/nexamsg",
+    "docs_url": "https://docs.nexacloud.io/nexamsg",
+    "config_reference": {
+      "webhook_retry_policy": "Configurable: max_attempts (1-10), backoff_multiplier (1-5), initial_delay_seconds",
+      "delivery_timeout": "Default 30s per attempt. Configurable up to 120s",
+      "signature_secret": "Set via PATCH /v2/msg/webhooks/{id} — {signing_secret}"
+    }
+  },
+  "NexaPay": {
+    "current_version": "4.1.0",
+    "active_incident": null,
+    "changelog": {
+      "4.1.0": "Added multi-currency reconciliation; improved idempotency key handling",
+      "4.0.5": "Fixed duplicate charge on network timeout with idempotency keys",
+      "4.0.0": "New payment routing engine; added support for SEPA and PIX"
+    },
+    "known_bugs": {
+      "4.0.0": [
+        "SEPA IBAN validation accepts invalid checksums — fixed in 4.0.5",
+        "Idempotency key TTL not respected when payment processor retries — fixed in 4.0.5"
+      ]
+    },
+    "engineering_contact": "nexapay-eng@nexacloud.io",
+    "status_page": "https://status.nexacloud.io/nexapay",
+    "docs_url": "https://docs.nexacloud.io/nexapay",
+    "config_reference": {
+      "idempotency_key": "Required header: Idempotency-Key: {uuid}. TTL 24h. Reuse returns cached response.",
+      "payment_methods": "Configure via PUT /v2/pay/config/methods — array of enabled methods",
+      "reconciliation_window": "Default 24h. Set via {reconciliation_window_hours}"
+    }
+  }
+}

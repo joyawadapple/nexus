@@ -1,0 +1,95 @@
+{
+  "client_001": {
+    "company": "Acme Corp",
+    "tier": "platinum",
+    "sla_hours": 4,
+    "csm": "Laura Pérez",
+    "csm_email": "laura.perez@nexacloud.io",
+    "integration_type": "sdk",
+    "sdk_version": "nexacloud-python-sdk==3.2.1",
+    "products_subscribed": ["NexaAuth", "NexaPay"],
+    "recent_tickets": [
+      {
+        "ticket_id": "NX-2026-4410",
+        "product": "NexaAuth",
+        "error": "401_invalid_token",
+        "resolved": true,
+        "created_at": "2026-02-15T10:00:00Z"
+      },
+      {
+        "ticket_id": "NX-2026-4388",
+        "product": "NexaAuth",
+        "error": "401_invalid_token",
+        "resolved": true,
+        "created_at": "2026-01-20T14:00:00Z"
+      }
+    ],
+    "vip_flag": true,
+    "region": "EU",
+    "api_key_prefix": "nxa_acme_"
+  },
+  "client_002": {
+    "company": "GlobalRetail SA",
+    "tier": "gold",
+    "sla_hours": 8,
+    "csm": "Marco Bianchi",
+    "csm_email": "marco.bianchi@nexacloud.io",
+    "integration_type": "rest",
+    "sdk_version": null,
+    "products_subscribed": ["NexaStore", "NexaMsg"],
+    "recent_tickets": [],
+    "vip_flag": false,
+    "region": "EU",
+    "api_key_prefix": "nxa_gretail_"
+  },
+  "client_003": {
+    "company": "DevStartup Ltd",
+    "tier": "standard",
+    "sla_hours": 24,
+    "csm": "Sofia Torres",
+    "csm_email": "sofia.torres@nexacloud.io",
+    "integration_type": "sdk",
+    "sdk_version": "nexacloud-python-sdk==3.1.0",
+    "products_subscribed": ["NexaAuth"],
+    "recent_tickets": [
+      {
+        "ticket_id": "NX-2026-4401",
+        "product": "NexaAuth",
+        "error": "429_rate_limit_exceeded",
+        "resolved": true,
+        "created_at": "2026-03-01T09:00:00Z"
+      },
+      {
+        "ticket_id": "NX-2026-4375",
+        "product": "NexaAuth",
+        "error": "429_rate_limit_exceeded",
+        "resolved": true,
+        "created_at": "2026-02-10T11:00:00Z"
+      },
+      {
+        "ticket_id": "NX-2026-4350",
+        "product": "NexaAuth",
+        "error": "429_rate_limit_exceeded",
+        "resolved": true,
+        "created_at": "2026-01-05T16:00:00Z"
+      },
+      {
+        "ticket_id": "NX-2026-4310",
+        "product": "NexaAuth",
+        "error": "401_insufficient_scope",
+        "resolved": true,
+        "created_at": "2025-12-20T08:00:00Z"
+      },
+      {
+        "ticket_id": "NX-2026-4280",
+        "product": "NexaAuth",
+        "error": "401_invalid_token",
+        "resolved": true,
+        "created_at": "2025-11-15T12:00:00Z"
+      }
+    ],
+    "vip_flag": false,
+    "region": "LATAM",
+    "api_key_prefix": "nxa_devstartup_"
+  }
+}

@@ -1,0 +1,923 @@
+{
+  "timestamp": "2026-03-10T20:51:56.306318",
+  "score": "1/10",
+  "passed": 1,
+  "failed": 5,
+  "errors": 4,
+  "results": [
+    {
+      "id": "eval_001",
+      "name": "Platinum client 401 after key rotation \u2014 self resolve",
+      "status": "ERROR",
+      "error": "",
+      "failures": []
+    },
+    {
+      "id": "eval_002",
+      "name": "Known incident \u2014 NexaMsg webhook failure",
+      "status": "FAIL",
+      "failures": [
+        {
+          "field": "resolution_agent_ran",
+          "expected": false,
+          "actual": null,
+          "reason": "Value mismatch"
+        },
+        {
+          "field": "escalation_agent_ran",
+          "expected": true,
+          "actual": null,
+          "reason": "Value mismatch"
+        },
+        {
+          "field": "turns_to_ticket",
+          "expected": 2,
+          "actual": null,
+          "reason": "Value mismatch"
+        }
+      ],
+      "result": {
+        "session_id": "sess_adea047023ba",
+        "ticket": {
+          "ticket_id": "NX-2026-4481",
+          "created_at": "2026-03-10T20:44:00.036987Z",
+          "sla_deadline": "2026-03-11T04:43:42Z",
+          "status": "escalated",
+          "priority": "high",
+          "client": {
+            "company": "GlobalRetail SA",
+            "tier": "gold",
+            "sla_hours": 8,
+            "sla_deadline": "2026-03-11T04:43:42Z",
+            "csm": "Marco Bianchi",
+            "csm_notified": true,
+            "recent_tickets": 0,
+            "vip_flag": false
+          },
+          "issue_summary": {
+            "product": "NexaMsg",
+            "error_message": "Webhooks have stopped delivering completely",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": true,
+            "recurring": false
+          },
+          "diagnosis": {
+            "primary_cause": "Under investigation",
+            "confidence": 0.0,
+            "supporting_evidence": [],
+            "alternative_causes": []
+          },
+          "resolution": {
+            "estimated_resolution_time": "unknown",
+            "steps": [],
+            "prevention": null,
+            "rag_source": null,
+            "confidence": 0.0,
+            "steps_count": 0,
+            "has_prevention_step": false
+          },
+          "escalation": {
+            "decision": "escalated",
+            "reason": "Active product incident detected \u2014 routing to engineering team",
+            "fallback": "If resolution steps do not resolve the issue within 30 minutes, contact Marco Bianchi for escalation.",
+            "escalation_path": "CSM: marco.bianchi@nexacloud.io \u2192 Engineering: nexamsg-eng@nexacloud.io"
+          },
+          "sentiment_analysis": {
+            "detected": "calm",
+            "tone_adjustment_applied": false,
+            "note": null
+          },
+          "nexus_summary": "GlobalRetail SA (Gold tier) reported complete webhook delivery failure on NexaMsg in their production environment. This has been identified as part of an active known incident \u2014 NexaMsg webhook delivery degraded in the EU-WEST region, currently under investigation by the engineering team. A temporary workaround has been provided via the webhook retry endpoint, and the CSM Marco Bianchi has been notified pending the next status update at 15:00Z on 2026-03-10.",
+          "data_provenance": {
+            "triage_confidence": 1.0,
+            "diagnostic_confidence": 0.0,
+            "resolution_confidence": 0.0,
+            "rag_source": "",
+            "hallucination_flags": 0
+          },
+          "agent_reasoning_logs": {},
+          "confidence_breakdown": {
+            "triage": 1.0,
+            "diagnostic": 0.0,
+            "resolution": 0.0,
+            "escalation": 0.97,
+            "overall": 1.0
+          },
+          "issue": {
+            "product": "NexaMsg",
+            "error_message": "Webhooks have stopped delivering completely",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": true,
+            "recurring": false
+          }
+        },
+        "meta": {
+          "triage_run_count": 1,
+          "question_count_violations": [],
+          "diagnostic_ran": false,
+          "resolution_ran": false,
+          "resolution_gate_respected": true,
+          "diagnostic_confidence_per_turn": []
+        },
+        "agent_statuses": [
+          {
+            "agent": "triage_agent",
+            "status": "complete",
+            "confidence": 1.0
+          },
+          {
+            "agent": "diagnostic_agent",
+            "status": "pending",
+            "confidence": 0.0
+          },
+          {
+            "agent": "resolution_agent",
+            "status": "pending",
+            "confidence": 0.0
+          },
+          {
+            "agent": "escalation_agent",
+            "status": "complete",
+            "confidence": 0.97
+          }
+        ],
+        "partial_ticket": {
+          "client": {
+            "company": "GlobalRetail SA",
+            "tier": "gold",
+            "sla_hours": 8
+          },
+          "issue": {
+            "product": "NexaMsg",
+            "error_message": "Webhooks have stopped delivering completely",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": true,
+            "recurring": false
+          },
+          "priority": "high",
+          "sla_deadline": "2026-03-11T04:43:42Z"
+        }
+      }
+    },
+    {
+      "id": "eval_003",
+      "name": "Recurring issue \u2014 Standard tier 3rd occurrence forces escalation",
+      "status": "ERROR",
+      "error": "",
+      "failures": []
+    },
+    {
+      "id": "eval_004",
+      "name": "Frustrated Platinum client \u2014 sentiment adjusts escalation",
+      "status": "FAIL",
+      "failures": [
+        {
+          "field": "ticket.sentiment_analysis.detected",
+          "expected": "frustrated",
+          "actual": "urgent",
+          "reason": "Value mismatch"
+        },
+        {
+          "field": "nexus_first_response_contains_empathy",
+          "expected": true,
+          "actual": null,
+          "reason": "Value mismatch"
+        },
+        {
+          "field": "escalation_threshold_lowered",
+          "expected": true,
+          "actual": null,
+          "reason": "Value mismatch"
+        }
+      ],
+      "result": {
+        "session_id": "sess_14a35fff5fbc",
+        "ticket": {
+          "ticket_id": "NX-2026-4482",
+          "created_at": "2026-03-10T20:47:22.394738Z",
+          "sla_deadline": "2026-03-11T00:46:48Z",
+          "status": "escalated",
+          "priority": "critical",
+          "client": {
+            "company": "Acme Corp",
+            "tier": "platinum",
+            "sla_hours": 4,
+            "sla_deadline": "2026-03-11T00:46:48Z",
+            "csm": "Laura P\u00e9rez",
+            "csm_notified": true,
+            "recent_tickets": 2,
+            "vip_flag": true
+          },
+          "issue_summary": {
+            "product": "NexaAuth",
+            "error_message": "429 rate limit error despite being under quota limits",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          },
+          "diagnosis": {
+            "primary_cause": "Retry storm caused by missing or improper exponential backoff \u2014 services receiving 429 responses are immediately retrying, compounding the rate limit pressure and creating a self-reinforcing loop that keeps the 429s firing even though baseline quota is not exceeded.",
+            "confidence": 0.4,
+            "supporting_evidence": [
+              "Error DB identifies 'retry_storm' and 'missing_exponential_backoff' as known causes for 429 errors that appear despite being under quota",
+              "Impact scope is 'all_users' which is consistent with a cascading retry storm amplifying request volume system-wide",
+              "RAG result #3 explicitly identifies retry storms as a common pattern for 429 errors across NexaCloud products",
+              "Burst traffic from retry accumulation would exceed per-second or per-minute burst limits even when overall quota ceiling appears unbreached"
+            ],
+            "alternative_causes": [
+              {
+                "cause": "Shared API key used across multiple services \u2014 aggregate request counts from multiple consumers hitting the same key's rate limit, while each individual service appears under quota when checked in isolation.",
+                "confidence": 0.4,
+                "evidence": [],
+                "why_less_likely": "Requires a specific architectural configuration (shared key); no confirmation from client yet, but all_users impact scope is consistent with this pattern. Error DB lists this as a known cause."
+              },
+              {
+                "cause": "Rate limit counter not reset after a recent API key rotation \u2014 a known version-specific bug (fixed in 3.2.0) where the rate limit counter persists across key rotation, causing inflated counts that trigger 429s despite actual traffic being within quota.",
+                "confidence": 0.35,
+                "evidence": [],
+                "why_less_likely": "Depends on a recent key rotation having occurred and on the client running a version prior to 3.2.0. No version or recent-changes data collected yet, and started_at is unknown, making it impossible to correlate timing."
+              }
+            ]
+          },
+          "resolution": {
+            "estimated_resolution_time": "unknown",
+            "steps": [],
+            "prevention": null,
+            "rag_source": null,
+            "confidence": 0.0,
+            "steps_count": 0,
+            "has_prevention_step": false
+          },
+          "escalation": {
+            "decision": "escalated",
+            "reason": "Diagnostic confidence too low (40%) to attempt self-service resolution",
+            "fallback": "If resolution steps do not resolve the issue within 30 minutes, contact Laura P\u00e9rez for escalation.",
+            "escalation_path": "CSM: laura.perez@nexacloud.io \u2192 Engineering: nexaauth-eng@nexacloud.io"
+          },
+          "sentiment_analysis": {
+            "detected": "urgent",
+            "tone_adjustment_applied": true,
+            "note": null
+          },
+          "nexus_summary": "Acme Corp (Platinum VIP) is experiencing a critical production outage on NexaAuth, with all users receiving 429 rate limit errors despite confirmed quota headroom, resulting in active financial losses estimated in the thousands of euros. Diagnostic analysis points to a likely retry storm caused by missing exponential backoff logic, creating a self-reinforcing rate limit loop \u2014 however, diagnostic confidence is low at 40% and no resolution steps have been completed. This ticket has been auto-escalated to CSM Laura P\u00e9rez and the NexaAuth engineering team under the active Platinum 4-hour SLA, with urgent sentiment and production-critical severity flagged.",
+          "data_provenance": {
+            "triage_confidence": 0.8,
+            "diagnostic_confidence": 0.4,
+            "resolution_confidence": 0.0,
+            "rag_source": "",
+            "hallucination_flags": 0
+          },
+          "agent_reasoning_logs": {},
+          "confidence_breakdown": {
+            "triage": 0.8,
+            "diagnostic": 0.4,
+            "resolution": 0.0,
+            "escalation": 0.97,
+            "overall": 0.5657
+          },
+          "issue": {
+            "product": "NexaAuth",
+            "error_message": "429 rate limit error despite being under quota limits",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          }
+        },
+        "meta": {
+          "triage_run_count": 1,
+          "question_count_violations": [],
+          "diagnostic_ran": true,
+          "resolution_ran": false,
+          "resolution_gate_respected": true,
+          "diagnostic_confidence_per_turn": [
+            0.4
+          ]
+        },
+        "agent_statuses": [
+          {
+            "agent": "triage_agent",
+            "status": "complete",
+            "confidence": 0.8
+          },
+          {
+            "agent": "diagnostic_agent",
+            "status": "running",
+            "confidence": 0.4
+          },
+          {
+            "agent": "resolution_agent",
+            "status": "pending",
+            "confidence": 0.0
+          },
+          {
+            "agent": "escalation_agent",
+            "status": "complete",
+            "confidence": 0.97
+          }
+        ],
+        "partial_ticket": {
+          "client": {
+            "company": "Acme Corp",
+            "tier": "platinum",
+            "sla_hours": 4
+          },
+          "issue": {
+            "product": "NexaAuth",
+            "error_message": "429 rate limit error despite being under quota limits",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          },
+          "priority": "critical",
+          "sla_deadline": "2026-03-11T00:46:48Z",
+          "diagnosis": {
+            "primary_cause": "Retry storm caused by missing or improper exponential backoff \u2014 services receiving 429 responses are immediately retrying, compounding the rate limit pressure and creating a self-reinforcing loop that keeps the 429s firing even though baseline quota is not exceeded.",
+            "confidence": 0.4
+          }
+        }
+      }
+    },
+    {
+      "id": "eval_005",
+      "name": "Vague issue \u2014 low confidence forces escalation",
+      "status": "PASS",
+      "failures": [],
+      "result": {
+        "session_id": "sess_3c55e4fcf0d9",
+        "ticket": {
+          "ticket_id": "NX-2026-4483",
+          "created_at": "2026-03-10T20:48:36.219982Z",
+          "sla_deadline": "2026-03-11T04:48:03Z",
+          "status": "escalated",
+          "priority": "medium",
+          "client": {
+            "company": "GlobalRetail SA",
+            "tier": "gold",
+            "sla_hours": 8,
+            "sla_deadline": "2026-03-11T04:48:03Z",
+            "csm": "Marco Bianchi",
+            "csm_notified": false,
+            "recent_tickets": 0,
+            "vip_flag": false
+          },
+          "issue_summary": {
+            "product": "NexaStore",
+            "error_message": "error sometimes",
+            "environment": "staging",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          },
+          "diagnosis": {
+            "primary_cause": "Intermittent NexaStore server-side infrastructure issue (nexa_infra_issue) causing non-deterministic error responses in the staging environment",
+            "confidence": 0.45,
+            "supporting_evidence": [
+              "Error DB exact match for server category with known cause: nexa_infra_issue",
+              "Error described as intermittent ('sometimes'), consistent with transient infrastructure instability",
+              "Auto-escalate flag set to True in error_db for this error category, indicating known infrastructure-level concern"
+            ],
+            "alternative_causes": [
+              {
+                "cause": "Legacy ACL migration not completed \u2014 manual migration step was skipped after a recent upgrade, causing intermittent access denials on certain resources",
+                "confidence": 0.2,
+                "evidence": [],
+                "why_less_likely": "No version upgrade has been confirmed by the client, and the error description is too vague to confirm ACL-related access failures; RAG result for 403 access denied has low similarity (0.55) and no error code has been confirmed"
+              },
+              {
+                "cause": "CORS strict mode misconfiguration \u2014 wildcard origin rejected intermittently depending on request origin, causing sporadic failures on browser-based requests",
+                "confidence": 0.15,
+                "evidence": [],
+                "why_less_likely": "CORS errors typically present consistently from a given origin, not intermittently; RAG similarity for CORS guide is very low (0.39); no browser-based access pattern has been confirmed"
+              }
+            ]
+          },
+          "resolution": {
+            "estimated_resolution_time": "unknown",
+            "steps": [],
+            "prevention": null,
+            "rag_source": null,
+            "confidence": 0.0,
+            "steps_count": 0,
+            "has_prevention_step": false
+          },
+          "escalation": {
+            "decision": "escalated",
+            "reason": "Diagnostic confidence too low (45%) to attempt self-service resolution",
+            "fallback": "If resolution steps do not resolve the issue within 30 minutes, contact Marco Bianchi for escalation.",
+            "escalation_path": null
+          },
+          "sentiment_analysis": {
+            "detected": "frustrated",
+            "tone_adjustment_applied": true,
+            "note": null
+          },
+          "nexus_summary": "GlobalRetail SA (Gold tier) is reporting intermittent, non-specific errors in their NexaStore staging environment with no reproducible pattern or error codes provided. Diagnostic confidence is low at 45%, with the primary hypothesis pointing to a potential server-side infrastructure issue within NexaStore's staging layer. Due to the client's Gold tier status, frustrated sentiment, and insufficient diagnostic clarity, this ticket has been escalated for human review and engineering investigation.",
+          "data_provenance": {
+            "triage_confidence": 0.6,
+            "diagnostic_confidence": 0.45,
+            "resolution_confidence": 0.0,
+            "rag_source": "",
+            "hallucination_flags": 0
+          },
+          "agent_reasoning_logs": {},
+          "confidence_breakdown": {
+            "triage": 0.6,
+            "diagnostic": 0.45,
+            "resolution": 0.0,
+            "escalation": 0.97,
+            "overall": 0.5196
+          },
+          "issue": {
+            "product": "NexaStore",
+            "error_message": "error sometimes",
+            "environment": "staging",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          }
+        },
+        "meta": {
+          "triage_run_count": 1,
+          "question_count_violations": [],
+          "diagnostic_ran": true,
+          "resolution_ran": false,
+          "resolution_gate_respected": true,
+          "diagnostic_confidence_per_turn": [
+            0.45
+          ]
+        },
+        "agent_statuses": [
+          {
+            "agent": "triage_agent",
+            "status": "complete",
+            "confidence": 0.6
+          },
+          {
+            "agent": "diagnostic_agent",
+            "status": "running",
+            "confidence": 0.45
+          },
+          {
+            "agent": "resolution_agent",
+            "status": "pending",
+            "confidence": 0.0
+          },
+          {
+            "agent": "escalation_agent",
+            "status": "complete",
+            "confidence": 0.97
+          }
+        ],
+        "partial_ticket": {
+          "client": {
+            "company": "GlobalRetail SA",
+            "tier": "gold",
+            "sla_hours": 8
+          },
+          "issue": {
+            "product": "NexaStore",
+            "error_message": "error sometimes",
+            "environment": "staging",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          },
+          "priority": "medium",
+          "sla_deadline": "2026-03-11T04:48:03Z",
+          "diagnosis": {
+            "primary_cause": "Intermittent NexaStore server-side infrastructure issue (nexa_infra_issue) causing non-deterministic error responses in the staging environment",
+            "confidence": 0.45
+          }
+        }
+      }
+    },
+    {
+      "id": "eval_006",
+      "name": "Session isolation \u2014 switching clients produces independent sessions",
+      "status": "FAIL",
+      "failures": [
+        {
+          "field": "session_1.client.company",
+          "expected": "Acme Corp",
+          "actual": null,
+          "reason": "Value mismatch"
+        },
+        {
+          "field": "session_2.client.company",
+          "expected": "GlobalRetail SA",
+          "actual": null,
+          "reason": "Value mismatch"
+        }
+      ],
+      "result": {
+        "session_1": {
+          "session_id": "sess_a1d01d52d979",
+          "ticket": {
+            "client": {
+              "company": "Acme Corp",
+              "tier": "platinum",
+              "sla_hours": 4
+            },
+            "issue": {
+              "product": "",
+              "error_message": "API calls are failing",
+              "environment": "production",
+              "started_at": "unknown",
+              "impact_scope": "all_users",
+              "known_incident": false,
+              "recurring": false
+            },
+            "priority": "critical",
+            "sla_deadline": "2026-03-11T00:48:44Z",
+            "status": "collecting",
+            "escalation": {},
+            "diagnosis": {}
+          },
+          "meta": {
+            "triage_run_count": 1,
+            "question_count_violations": [],
+            "diagnostic_ran": false,
+            "resolution_ran": false,
+            "resolution_gate_respected": true,
+            "diagnostic_confidence_per_turn": []
+          },
+          "agent_statuses": [
+            {
+              "agent": "triage_agent",
+              "status": "running",
+              "confidence": 0.2
+            },
+            {
+              "agent": "diagnostic_agent",
+              "status": "pending",
+              "confidence": 0.0
+            },
+            {
+              "agent": "resolution_agent",
+              "status": "pending",
+              "confidence": 0.0
+            },
+            {
+              "agent": "escalation_agent",
+              "status": "pending",
+              "confidence": 0.0
+            }
+          ],
+          "partial_ticket": {
+            "client": {
+              "company": "Acme Corp",
+              "tier": "platinum",
+              "sla_hours": 4
+            },
+            "issue": {
+              "product": "",
+              "error_message": "API calls are failing",
+              "environment": "production",
+              "started_at": "unknown",
+              "impact_scope": "all_users",
+              "known_incident": false,
+              "recurring": false
+            },
+            "priority": "critical",
+            "sla_deadline": "2026-03-11T00:48:44Z"
+          }
+        },
+        "session_2": {
+          "session_id": "sess_5dd2061e3e21",
+          "ticket": {
+            "ticket_id": "NX-2026-4484",
+            "created_at": "2026-03-10T20:49:07.306866Z",
+            "sla_deadline": "2026-03-11T04:48:56Z",
+            "status": "escalated",
+            "priority": "high",
+            "client": {
+              "company": "GlobalRetail SA",
+              "tier": "gold",
+              "sla_hours": 8,
+              "sla_deadline": "2026-03-11T04:48:56Z",
+              "csm": "Marco Bianchi",
+              "csm_notified": true,
+              "recent_tickets": 0,
+              "vip_flag": false
+            },
+            "issue_summary": {
+              "product": "NexaMsg",
+              "error_message": "Webhook delivery stopped",
+              "environment": "production",
+              "started_at": "unknown",
+              "impact_scope": "all_users",
+              "known_incident": true,
+              "recurring": false
+            },
+            "diagnosis": {
+              "primary_cause": "Under investigation",
+              "confidence": 0.0,
+              "supporting_evidence": [],
+              "alternative_causes": []
+            },
+            "resolution": {
+              "estimated_resolution_time": "unknown",
+              "steps": [],
+              "prevention": null,
+              "rag_source": null,
+              "confidence": 0.0,
+              "steps_count": 0,
+              "has_prevention_step": false
+            },
+            "escalation": {
+              "decision": "escalated",
+              "reason": "Active product incident detected \u2014 routing to engineering team",
+              "fallback": "If resolution steps do not resolve the issue within 30 minutes, contact Marco Bianchi for escalation.",
+              "escalation_path": "CSM: marco.bianchi@nexacloud.io \u2192 Engineering: nexamsg-eng@nexacloud.io"
+            },
+            "sentiment_analysis": {
+              "detected": "calm",
+              "tone_adjustment_applied": false,
+              "note": null
+            },
+            "nexus_summary": "GlobalRetail SA (gold tier) reported a complete stoppage of webhook delivery on NexaMsg in their production environment. Triage identified this as a known incident with 100% confidence, triggering an immediate auto-escalation to the NexaMsg engineering team. Diagnostic and resolution steps were not initiated, as known incidents are handled directly by engineering.",
+            "data_provenance": {
+              "triage_confidence": 1.0,
+              "diagnostic_confidence": 0.0,
+              "resolution_confidence": 0.0,
+              "rag_source": "",
+              "hallucination_flags": 0
+            },
+            "agent_reasoning_logs": {},
+            "confidence_breakdown": {
+              "triage": 1.0,
+              "diagnostic": 0.0,
+              "resolution": 0.0,
+              "escalation": 0.97,
+              "overall": 1.0
+            },
+            "issue": {
+              "product": "NexaMsg",
+              "error_message": "Webhook delivery stopped",
+              "environment": "production",
+              "started_at": "unknown",
+              "impact_scope": "all_users",
+              "known_incident": true,
+              "recurring": false
+            }
+          },
+          "meta": {
+            "triage_run_count": 1,
+            "question_count_violations": [],
+            "diagnostic_ran": false,
+            "resolution_ran": false,
+            "resolution_gate_respected": true,
+            "diagnostic_confidence_per_turn": []
+          },
+          "agent_statuses": [
+            {
+              "agent": "triage_agent",
+              "status": "complete",
+              "confidence": 1.0
+            },
+            {
+              "agent": "diagnostic_agent",
+              "status": "pending",
+              "confidence": 0.0
+            },
+            {
+              "agent": "resolution_agent",
+              "status": "pending",
+              "confidence": 0.0
+            },
+            {
+              "agent": "escalation_agent",
+              "status": "complete",
+              "confidence": 0.97
+            }
+          ],
+          "partial_ticket": {
+            "client": {
+              "company": "GlobalRetail SA",
+              "tier": "gold",
+              "sla_hours": 8
+            },
+            "issue": {
+              "product": "NexaMsg",
+              "error_message": "Webhook delivery stopped",
+              "environment": "production",
+              "started_at": "unknown",
+              "impact_scope": "all_users",
+              "known_incident": true,
+              "recurring": false
+            },
+            "priority": "high",
+            "sla_deadline": "2026-03-11T04:48:56Z"
+          }
+        },
+        "session_ids_different": true,
+        "no_state_bleed": true
+      }
+    },
+    {
+      "id": "eval_007",
+      "name": "Triage runs exactly once per session",
+      "status": "ERROR",
+      "error": "",
+      "failures": []
+    },
+    {
+      "id": "eval_008",
+      "name": "Platinum defaults to critical severity before environment confirmed",
+      "status": "FAIL",
+      "failures": [
+        {
+          "field": "triage.severity_after_turn_1",
+          "expected": "critical",
+          "actual": null,
+          "reason": "Value mismatch"
+        }
+      ],
+      "result": {
+        "session_id": "sess_c52ab57065ed",
+        "ticket": {
+          "client": {
+            "company": "Acme Corp",
+            "tier": "platinum",
+            "sla_hours": 4
+          },
+          "issue": {
+            "product": "",
+            "error_message": "401 errors on API calls",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          },
+          "priority": "critical",
+          "sla_deadline": "2026-03-11T00:50:57Z",
+          "status": "collecting",
+          "escalation": {},
+          "diagnosis": {}
+        },
+        "meta": {
+          "triage_run_count": 1,
+          "question_count_violations": [],
+          "diagnostic_ran": false,
+          "resolution_ran": false,
+          "resolution_gate_respected": true,
+          "diagnostic_confidence_per_turn": []
+        },
+        "agent_statuses": [
+          {
+            "agent": "triage_agent",
+            "status": "running",
+            "confidence": 0.2
+          },
+          {
+            "agent": "diagnostic_agent",
+            "status": "pending",
+            "confidence": 0.0
+          },
+          {
+            "agent": "resolution_agent",
+            "status": "pending",
+            "confidence": 0.0
+          },
+          {
+            "agent": "escalation_agent",
+            "status": "pending",
+            "confidence": 0.0
+          }
+        ],
+        "partial_ticket": {
+          "client": {
+            "company": "Acme Corp",
+            "tier": "platinum",
+            "sla_hours": 4
+          },
+          "issue": {
+            "product": "",
+            "error_message": "401 errors on API calls",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          },
+          "priority": "critical",
+          "sla_deadline": "2026-03-11T00:50:57Z"
+        }
+      }
+    },
+    {
+      "id": "eval_009",
+      "name": "Question bundling never exceeds 2 per turn",
+      "status": "FAIL",
+      "failures": [
+        {
+          "field": "no_repeated_questions",
+          "expected": true,
+          "actual": null,
+          "reason": "Value mismatch"
+        },
+        {
+          "field": "asked_fields_never_repeated",
+          "expected": true,
+          "actual": null,
+          "reason": "Value mismatch"
+        }
+      ],
+      "result": {
+        "session_id": "sess_b5a959a9a793",
+        "ticket": {
+          "client": {
+            "company": "Acme Corp",
+            "tier": "platinum",
+            "sla_hours": 4
+          },
+          "issue": {
+            "product": "",
+            "error_message": "",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          },
+          "priority": "critical",
+          "sla_deadline": "2026-03-11T00:51:26Z",
+          "status": "collecting",
+          "escalation": {},
+          "diagnosis": {}
+        },
+        "meta": {
+          "triage_run_count": 1,
+          "question_count_violations": [],
+          "diagnostic_ran": false,
+          "resolution_ran": false,
+          "resolution_gate_respected": true,
+          "diagnostic_confidence_per_turn": []
+        },
+        "agent_statuses": [
+          {
+            "agent": "triage_agent",
+            "status": "running",
+            "confidence": 0.2
+          },
+          {
+            "agent": "diagnostic_agent",
+            "status": "pending",
+            "confidence": 0.0
+          },
+          {
+            "agent": "resolution_agent",
+            "status": "pending",
+            "confidence": 0.0
+          },
+          {
+            "agent": "escalation_agent",
+            "status": "pending",
+            "confidence": 0.0
+          }
+        ],
+        "partial_ticket": {
+          "client": {
+            "company": "Acme Corp",
+            "tier": "platinum",
+            "sla_hours": 4
+          },
+          "issue": {
+            "product": "",
+            "error_message": "",
+            "environment": "production",
+            "started_at": "unknown",
+            "impact_scope": "all_users",
+            "known_incident": false,
+            "recurring": false
+          },
+          "priority": "critical",
+          "sla_deadline": "2026-03-11T00:51:26Z"
+        }
+      }
+    },
+    {
+      "id": "eval_010",
+      "name": "Diagnostic confidence grows with each client confirmation",
+      "status": "ERROR",
+      "error": "Server disconnected without sending a response.",
+      "failures": []
+    }
+  ]
+}

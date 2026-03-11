@@ -1,0 +1,162 @@
+[
+  {
+    "id": "kb_diag_001",
+    "title": "NexaAuth 401 errors — complete diagnostic guide",
+    "category": "diagnostic",
+    "product": "NexaAuth",
+    "content": "NexaAuth 401 errors fall into four primary categories. (1) Token expiry: the JWT token has expired based on the token_lifetime configuration. Check the exp claim in the token payload. (2) Key rotation cache: after rotating an API key, the old token cache is not automatically invalidated. Clients on SDK versions < 3.2.1 are particularly affected. The fix is to call DELETE /v2/auth/tokens/cache after rotation. (3) Clock skew: NexaAuth requires client and server clocks to be within tolerance (300s in v3.2.1+, 0s in earlier versions). If a client's system clock is drifted, tokens will be rejected intermittently. (4) Wrong environment key: using a staging API key against production endpoints or vice versa. Check the key prefix — production keys start with nxa_prod_, staging with nxa_stg_. Diagnostic approach: first confirm the exact error code in the response body (invalid_token vs token_expired vs insufficient_scope). Check token issue time vs current time. Ask if any API key rotation occurred recently.",
+    "tags": ["401", "auth", "invalid_token", "jwt", "token_expiry", "key_rotation", "clock_skew"]
+  },
+  {
+    "id": "kb_diag_002",
+    "title": "NexaAuth 401 after API key rotation — root cause patterns",
+    "category": "diagnostic",
+    "product": "NexaAuth",
+    "content": "The most common cause of 401 invalid_token errors following API key rotation is failure to invalidate the token cache. When a new API key is issued, existing tokens remain in NexaAuth's validation cache until TTL expires (default: matches token_lifetime, typically 3600s). Clients must explicitly clear the cache via DELETE /v2/auth/tokens/cache or wait for natural expiry. Additionally, in SDK versions < 3.2.1, a known bug causes the SDK to not re-authenticate after key rotation — the cached token is reused until it expires. This manifests as consistent 401 failures starting immediately after rotation, affecting 100% of authenticated requests. Secondary causes: partial key rotation (new key set in some services but not others), or new key not properly propagated to all running instances of the application.",
+    "tags": ["401", "key_rotation", "cache", "sdk", "token_cache", "invalid_token"]
+  },
+  {
+    "id": "kb_diag_003",
+    "title": "NexaStore 403 access denied — causes and diagnosis",
+    "category": "diagnostic",
+    "product": "NexaStore",
+    "content": "NexaStore 403 errors have four common root causes: (1) Bucket policy mismatch — the resource being accessed is not covered by the active bucket policy. This became common after v2.3.0 deprecated the legacy ACL system. Clients upgrading from v2.2.x must manually migrate their ACL rules to the new bucket policy format. (2) CORS configuration — browser-initiated requests require the origin to be explicitly listed in the bucket CORS configuration. Wildcard (*) origins are rejected in strict mode. (3) Presigned URL expiry — presigned URLs have a configurable TTL (default 3600s, max 604800s). Expired URLs return 403 even for objects the client owns. (4) Legacy ACL not migrated — after upgrading to v2.3.0+, old ACL-based permissions are not automatically converted. The migration tool is available at GET /v2/store/admin/migrate-acl.",
+    "tags": ["403", "storage", "bucket_policy", "cors", "acl", "presigned_url", "access_denied"]
+  },
+  {
+    "id": "kb_diag_004",
+    "title": "NexaMsg webhook delivery failures — diagnostic tree",
+    "category": "diagnostic",
+    "product": "NexaMsg",
+    "content": "Webhook delivery failures follow a diagnostic tree: (1) Check for active incidents on the status page first — NexaMsg has had regional delivery issues. If an incident is active, do not proceed with client-side diagnosis. (2) If no incident, check webhook endpoint availability — the endpoint must be reachable from NexaMsg servers and respond with 2xx within the configured timeout (default 30s). (3) Check TLS — NexaMsg requires valid TLS certificates. Self-signed certificates are rejected. (4) Check signature validation — if the receiving endpoint validates webhook signatures, verify the signing_secret matches. A common cause is rotating the signing secret without updating the verification logic. (5) Check response code — NexaMsg only considers delivery successful on 2xx. 3xx redirects are not followed. Any 4xx or 5xx causes a retry. After max_attempts retries, the event is marked as failed and logged.",
+    "tags": ["webhook", "delivery_failure", "connectivity", "tls", "signature", "retry", "incident"]
+  },
+  {
+    "id": "kb_diag_005",
+    "title": "NexaPay reconciliation errors — root cause patterns",
+    "category": "diagnostic",
+    "product": "NexaPay",
+    "content": "Reconciliation mismatches in NexaPay have four primary causes: (1) Timezone mismatch — NexaPay uses UTC for all timestamps. Clients using local time for reconciliation windows will see mismatches near UTC midnight. Always use UTC for reconciliation queries. (2) Currency conversion rounding — multi-currency transactions use mid-market rates at transaction time. Reconciliation using different rates (e.g., bank statement rates) will show small discrepancies. (3) Settlement delay — payment settlement typically occurs 1-2 business days after authorization. Reconciling authorization totals vs settlement totals will show pending amounts. Use the settled_at field, not created_at. (4) Refund timing — refunds are processed asynchronously. A refund initiated on day N may not appear in the reconciliation export until day N+1. Use the refund webhook events for real-time tracking.",
+    "tags": ["reconciliation", "payments", "timezone", "settlement", "refunds", "mismatch"]
+  },
+  {
+    "id": "kb_diag_006",
+    "title": "Rate limiting errors across all products — detection guide",
+    "category": "diagnostic",
+    "product": "all",
+    "content": "Rate limiting (429 errors) across NexaCloud products share common patterns: (1) Burst traffic — sudden spikes from batch operations or retry storms. Check if multiple services share a single API key — each key has its own rate limit. (2) Missing backoff — clients retrying immediately on failure create retry storms that exhaust limits. All NexaCloud APIs include Retry-After headers. (3) Rate limit tier — Standard tier clients have lower limits than Gold and Platinum. Check current tier limits at GET /v2/account/limits. (4) Clock-based windows — rate limits reset at the start of each minute (not rolling windows). A burst at 00:59 and 01:00 uses two windows. Diagnostic questions: Is traffic pattern sudden or gradual? Are multiple services sharing one API key? What is the error rate — 100% or partial?",
+    "tags": ["429", "rate_limit", "backoff", "retry", "burst", "shared_key"]
+  },
+  {
+    "id": "kb_diag_007",
+    "title": "NexaAuth clock skew diagnostic",
+    "category": "diagnostic",
+    "product": "NexaAuth",
+    "content": "Clock skew causes intermittent 401 errors where some requests succeed and others fail. The failure pattern is unpredictable — not all requests fail, and the issue often resolves itself temporarily. Diagnostic signature: (1) Intermittent failures rather than consistent 100% failure rate. (2) Failures more common on the hour or at time boundaries. (3) Client reports no recent changes (no key rotation, no config changes). (4) Error body shows invalid_token not token_expired. In NexaAuth v3.2.1+, clock skew tolerance is 300s. In v3.1.x, tolerance is 0s. Check client's running SDK version. The fix is to sync the client system clock using NTP and optionally configure a higher clock_skew_seconds tolerance in NexaAuth configuration.",
+    "tags": ["clock_skew", "401", "intermittent", "ntp", "jwt", "invalid_token"]
+  },
+  {
+    "id": "kb_diag_008",
+    "title": "NexaStore CORS errors — complete diagnostic guide",
+    "category": "diagnostic",
+    "product": "NexaStore",
+    "content": "CORS errors in NexaStore manifest as 403 responses to pre-flight OPTIONS requests or actual GET/PUT requests from browsers. Diagnostic steps: (1) Determine if this is browser-initiated traffic (CORS applies) or server-to-server (CORS does not apply — different issue). (2) Check bucket CORS configuration: GET /v2/store/buckets/{id}/cors. Verify the requesting origin is listed. (3) Wildcard (*) origin is rejected in strict mode (enabled by default in v2.4.0+). Explicit origin list required. (4) Verify that the bucket CORS configuration includes the HTTP methods needed (GET, PUT, DELETE as applicable). (5) Check that the Access-Control-Allow-Headers includes any custom headers the client is sending. A misconfigured CORS policy that allows the origin but not the method or headers will still cause 403.",
+    "tags": ["cors", "403", "storage", "browser", "preflight", "origin", "headers"]
+  },
+  {
+    "id": "kb_diag_009",
+    "title": "NexaPay 409 duplicate payment diagnostic",
+    "category": "diagnostic",
+    "product": "NexaPay",
+    "content": "409 Conflict on payment endpoints indicates a duplicate payment detection. NexaPay uses idempotency keys to deduplicate. Diagnostic: (1) Confirm the Idempotency-Key header is present in all payment requests. If missing, every retry creates a new payment — this is the most common cause of unintended duplicates. (2) If the key is present, check if the same key was used with different parameters (different amount, currency, or payment method). NexaPay rejects this as a key reuse violation. (3) Check the idempotency key TTL — keys expire after 24 hours. After expiry, the same key can be reused safely. (4) If duplicate payments have already been processed, use the refund endpoint: POST /v2/pay/payments/{id}/refund. A reconciliation report at GET /v2/pay/reconciliation can identify all duplicates in a date range.",
+    "tags": ["409", "duplicate", "idempotency", "payments", "conflict", "retry"]
+  },
+  {
+    "id": "kb_diag_010",
+    "title": "NexaMsg signature validation failures — diagnostic",
+    "category": "diagnostic",
+    "product": "NexaMsg",
+    "content": "Webhook signature validation failures (401 invalid_signature) occur when the HMAC-SHA256 signature in the X-NexaMsg-Signature header does not match. Diagnostic: (1) Verify the signing_secret in use matches the secret configured for this webhook: GET /v2/msg/webhooks/{id}. (2) Check that the signature is computed over the raw request body, not a parsed/reformatted version. Any whitespace changes will invalidate the signature. (3) Verify the correct algorithm — NexaMsg uses HMAC-SHA256 with hex encoding, not base64. (4) If the signing secret was recently rotated, check that all consumers have the updated secret. There is a 5-minute overlap window where both old and new secrets are valid to facilitate rotation. (5) For payloads > 1MB, versions < 1.8.0 have a known bug where signature computation fails — upgrade to 1.8.0+.",
+    "tags": ["401", "signature", "webhook", "hmac", "signing_secret", "invalid_signature"]
+  },
+  {
+    "id": "kb_res_001",
+    "title": "Resolving NexaAuth token expiry issues — complete guide",
+    "category": "resolution",
+    "product": "NexaAuth",
+    "content": "Resolution steps for 401 invalid_token after key rotation: (1) Immediately invalidate the token cache by calling DELETE /v2/auth/tokens/cache with admin credentials. This clears all cached tokens and forces re-authentication. Command: DELETE /v2/auth/tokens/cache — Authorization: Bearer {admin_token}. Expected response: 204 No Content. (2) If on SDK < 3.2.1, upgrade to latest SDK version which contains the auto-invalidation fix. For Python SDK: pip install nexacloud-python-sdk==3.2.1. (3) Update token_lifetime if the default is too short post-rotation: PATCH /v2/auth/config — body: {\"token_lifetime\": 3600}. (4) Verify the new API key is correctly set in all environments by checking NEXA_AUTH_API_KEY across all services. (5) Test authentication: GET /v2/auth/verify — should return 200 with a fresh token. (6) Set up a monitoring alert for token cache invalidation events to prevent recurrence: POST /v2/auth/alerts with event_type: token_cache_cleared.",
+    "tags": ["resolution", "401", "token_expiry", "key_rotation", "cache", "sdk"]
+  },
+  {
+    "id": "kb_res_002",
+    "title": "Fixing NexaStore CORS configuration — step-by-step",
+    "category": "resolution",
+    "product": "NexaStore",
+    "content": "Resolution steps for NexaStore CORS 403 errors: (1) Get current CORS configuration: GET /v2/store/buckets/{bucket_id}/cors. Note existing allowed origins. (2) Add the missing origin to the allowed list. Do NOT use wildcard (*) — it will be rejected in v2.4.0+. Use the exact origin including protocol: {\"allowed_origins\": [\"https://app.example.com\", \"https://staging.example.com\"]}. (3) Set allowed methods to include all required HTTP methods: {\"allowed_methods\": [\"GET\", \"PUT\", \"DELETE\", \"HEAD\"]}. (4) Set allowed headers to include any custom headers: {\"allowed_headers\": [\"Content-Type\", \"Authorization\", \"X-Requested-With\"]}. (5) Apply via PUT /v2/store/buckets/{id}/cors with the complete config. (6) Test with a CORS preflight: OPTIONS request from browser DevTools. Expected: 200 with Access-Control-Allow-Origin header matching your origin. Note: CORS changes propagate in < 60 seconds.",
+    "tags": ["resolution", "cors", "storage", "403", "bucket", "preflight", "origin"]
+  },
+  {
+    "id": "kb_res_003",
+    "title": "NexaMsg webhook retry configuration — resolution guide",
+    "category": "resolution",
+    "product": "NexaMsg",
+    "content": "Resolution steps for webhook delivery failures: (1) First check if an active incident is in progress at status.nexacloud.io/nexamsg. If yes, use the manual retry endpoint: POST /v2/msg/webhooks/{webhook_id}/retry to redeliver failed events. Do not change configuration during an active incident. (2) If no incident, verify webhook endpoint is accessible: test with curl -I {your_webhook_url}. Ensure it responds with 2xx within 30s. (3) Check TLS certificate validity — NexaMsg rejects self-signed certs. Use a valid certificate from a trusted CA. (4) Configure retry policy for resilience: PATCH /v2/msg/webhooks/{id} — body: {\"retry_policy\": {\"max_attempts\": 5, \"backoff_multiplier\": 2, \"initial_delay_seconds\": 30}}. This provides 5 attempts with exponential backoff. (5) Enable delivery receipts to track future deliveries: PATCH /v2/msg/webhooks/{id} — {\"delivery_receipts\": true}. Failed deliveries will trigger a webhook_delivery_failed event to a fallback endpoint.",
+    "tags": ["resolution", "webhook", "retry", "delivery", "tls", "certificate", "incident"]
+  },
+  {
+    "id": "kb_res_004",
+    "title": "NexaPay idempotency key errors — resolution",
+    "category": "resolution",
+    "product": "NexaPay",
+    "content": "Resolution steps for NexaPay idempotency and duplicate payment issues: (1) For missing idempotency keys: immediately add Idempotency-Key: {uuid_v4} to ALL payment creation requests. Generate a new UUID per payment intent, not per retry. Example header: Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000. (2) For 409 conflict due to key reuse with different params: do NOT retry with the same key. Generate a new UUID for the new payment attempt. The original transaction can be looked up via GET /v2/pay/payments?idempotency_key={key}. (3) For unintended duplicate charges already processed: (a) identify duplicates via GET /v2/pay/reconciliation?start={date}&end={date}, (b) refund duplicates via POST /v2/pay/payments/{id}/refund — body: {\"reason\": \"duplicate_charge\", \"amount\": {full_amount}}. (4) Add idempotency key generation to client SDK wrapper to ensure all payment calls include it by default.",
+    "tags": ["resolution", "idempotency", "payments", "409", "duplicate", "refund", "uuid"]
+  },
+  {
+    "id": "kb_res_005",
+    "title": "API key rotation — complete safety checklist",
+    "category": "resolution",
+    "product": "all",
+    "content": "Safe API key rotation procedure for all NexaCloud products: (1) Generate new key: POST /v2/account/api-keys — body: {\"name\": \"production-key-v2\", \"scopes\": [...same scopes as current key...]}. Save the new key securely — it is only shown once. (2) Update key in all environments: check all services, containers, environment variables, CI/CD secrets, and third-party integrations that use the current key. Create a checklist and tick off each location. (3) For NexaAuth specifically: after updating the key, call DELETE /v2/auth/tokens/cache to immediately invalidate cached tokens. (4) Deploy the new key to one environment first (e.g., staging) and verify all integrations work before updating production. (5) Revoke the old key: DELETE /v2/account/api-keys/{old_key_id}. Wait until you confirm zero traffic on the old key before revoking. Check old_key usage via GET /v2/account/api-keys/{id}/usage. (6) Monitor error rates for 30 minutes post-rotation.",
+    "tags": ["resolution", "key_rotation", "api_key", "security", "deployment", "checklist"]
+  },
+  {
+    "id": "kb_res_006",
+    "title": "NexaAuth rate limiting — backoff implementation guide",
+    "category": "resolution",
+    "product": "NexaAuth",
+    "content": "Resolution steps for 429 rate limit exceeded on NexaAuth: (1) Immediately: read the Retry-After header in the 429 response. Do not retry before this time. Retry-After is in seconds from now. (2) Implement exponential backoff: initial_delay = Retry-After value; for each subsequent 429, double the delay with jitter: delay = min(initial_delay * (2 ** attempt) + random(0, 1), 300). (3) Isolate API keys: if multiple services share one NexaAuth API key, each service consumes from the same rate limit bucket. Create separate keys per service: POST /v2/account/api-keys. (4) Check current limits: GET /v2/account/limits — shows your tier limits and current usage. (5) If traffic is legitimately high and limits need increasing, contact your CSM for a limit increase. Platinum clients have priority processing. (6) Add circuit breaker logic to stop all requests for 60s after 5 consecutive 429s.",
+    "tags": ["resolution", "429", "rate_limit", "backoff", "circuit_breaker", "retry", "exponential"]
+  },
+  {
+    "id": "kb_res_007",
+    "title": "NexaStore legacy ACL migration to bucket policies",
+    "category": "resolution",
+    "product": "NexaStore",
+    "content": "Resolution for 403 Access Denied after upgrading to NexaStore v2.3.0+: (1) Run the ACL migration check: GET /v2/store/admin/migrate-acl — this identifies all buckets with unmigrated ACL rules. (2) For each unmigrated bucket, review current ACL: GET /v2/store/buckets/{id}/acl. (3) Create an equivalent bucket policy: PUT /v2/store/buckets/{id}/policy — the migration guide at docs.nexacloud.io/nexastore/acl-migration provides translation rules for each ACL type. (4) Key translations: private ACL → deny all public, bucket-owner-full-control → allow all for owner principal, public-read → allow GET for principal: *. (5) Apply the policy and test with: GET /v2/store/buckets/{id}/policy/validate. (6) Set a fallback: if migration is complex and access is urgent, temporarily downgrade to strict_mode: false in bucket settings — this re-enables legacy ACL processing while migration completes. Note: strict_mode will be permanently removed in v3.0.",
+    "tags": ["resolution", "storage", "acl", "bucket_policy", "migration", "403", "access_denied"]
+  },
+  {
+    "id": "kb_res_008",
+    "title": "NexaPay reconciliation fix — timezone and settlement guide",
+    "category": "resolution",
+    "product": "NexaPay",
+    "content": "Resolution for NexaPay reconciliation mismatches: (1) Timezone fix: switch all reconciliation queries to use UTC. Update your query parameters: start_date and end_date in ISO 8601 format with Z suffix (e.g., 2026-03-10T00:00:00Z). The reconciliation export endpoint at GET /v2/pay/reconciliation accepts start and end in UTC only. (2) Settlement vs authorization: use settled_at for accounting reconciliation, not created_at. A payment authorized Monday may not settle until Wednesday. To get settled payments: GET /v2/pay/payments?status=settled&settled_after={date}&settled_before={date}. (3) For currency conversion discrepancies: request the exchange_rate_snapshot for each transaction: GET /v2/pay/payments/{id} includes rate used at transaction time. Compare against your bank's rates. Small differences (< 0.1%) are expected. (4) Run the automated reconciliation report: POST /v2/pay/reconciliation/report — this generates a CSV matching NexaPay records to expected totals with variance explanations.",
+    "tags": ["resolution", "reconciliation", "payments", "timezone", "settlement", "currency"]
+  },
+  {
+    "id": "kb_res_009",
+    "title": "NexaAuth clock skew fix — NTP sync and configuration",
+    "category": "resolution",
+    "product": "NexaAuth",
+    "content": "Resolution for 401 errors caused by clock skew: (1) Verify clock drift: compare client server time against NTP: ntpdate -q pool.ntp.org (Linux/Mac) or w32tm /query /status (Windows). Drift > 300s causes consistent failures in NexaAuth v3.2.1+. (2) Fix system clock: sync with NTP: sudo ntpdate pool.ntp.org (immediate) or enable ntpd/chronyd for ongoing sync. For containers: ensure host clock sync propagates to containers. (3) Configure NexaAuth clock skew tolerance (v3.2.1+ only): PATCH /v2/auth/config — body: {\"clock_skew_seconds\": 300}. Default is 300s in v3.2.1. In v3.1.x, tolerance is 0s — upgrade to v3.2.1 for configurable tolerance. (4) If using SDK < 3.2.1 with known clock skew bug: upgrade to v3.2.1 which adds clock drift compensation. (5) After fixing clock: call DELETE /v2/auth/tokens/cache to clear any tokens rejected due to clock skew. New authentication attempts should succeed immediately.",
+    "tags": ["resolution", "clock_skew", "ntp", "401", "configuration", "sdk", "intermittent"]
+  },
+  {
+    "id": "kb_res_010",
+    "title": "NexaMsg signing secret rotation — safe procedure",
+    "category": "resolution",
+    "product": "NexaMsg",
+    "content": "Safe webhook signing secret rotation for NexaMsg: (1) Generate a new signing secret: PATCH /v2/msg/webhooks/{id} — body: {\"rotate_signing_secret\": true}. The response includes both the new_secret and the old_secret remains valid for 5 minutes (overlap window). (2) Update the signing secret in your webhook verification code immediately. The secret is a 32-byte hex string. Update all instances where the HMAC-SHA256 signature is computed. (3) During the 5-minute overlap window: deploy the updated verification code that checks against the new secret. If rollout takes > 5 minutes, use {\"signing_secret_overlap_minutes\": 30} to extend the overlap. (4) Verify rotation success: send a test event via POST /v2/msg/webhooks/{id}/test — the test webhook should be received and signature validation should pass. (5) The old secret is automatically revoked after the overlap window expires. No manual revocation needed.",
+    "tags": ["resolution", "signing_secret", "webhook", "rotation", "hmac", "security", "deployment"]
+  }
+]

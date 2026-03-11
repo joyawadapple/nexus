@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "nexus": "./agents/nexus_graph_dev.py:graph"
+  },
+  "env": ".env"
+}

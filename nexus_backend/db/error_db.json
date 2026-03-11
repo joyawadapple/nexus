@@ -1,0 +1,266 @@
+{
+  "NexaAuth": {
+    "401_invalid_token": {
+      "http_status": 401,
+      "category": "auth",
+      "known_causes": ["expired_token", "key_rotation_cache_not_cleared", "clock_skew", "wrong_environment_key", "revoked_token"],
+      "typical_resolution_minutes": 20,
+      "auto_escalate": false,
+      "description": "JWT token rejected as invalid. Most common after API key rotation or token expiry."
+    },
+    "401_insufficient_scope": {
+      "http_status": 401,
+      "category": "auth",
+      "known_causes": ["missing_permissions", "wrong_token_type", "scope_not_requested"],
+      "typical_resolution_minutes": 10,
+      "auto_escalate": false,
+      "description": "Token valid but lacks required scope for the requested operation."
+    },
+    "401_token_expired": {
+      "http_status": 401,
+      "category": "auth",
+      "known_causes": ["token_lifetime_too_short", "system_clock_drift", "no_refresh_logic"],
+      "typical_resolution_minutes": 15,
+      "auto_escalate": false,
+      "description": "Token issued successfully but expired before use. Check token_lifetime configuration."
+    },
+    "403_forbidden": {
+      "http_status": 403,
+      "category": "auth",
+      "known_causes": ["ip_allowlist_block", "account_suspended", "feature_not_enabled"],
+      "typical_resolution_minutes": 30,
+      "auto_escalate": false,
+      "description": "Authentication succeeded but access to resource is denied."
+    },
+    "429_rate_limit_exceeded": {
+      "http_status": 429,
+      "category": "rate_limit",
+      "known_causes": ["burst_traffic", "missing_exponential_backoff", "shared_api_key_across_services", "retry_storm"],
+      "typical_resolution_minutes": 5,
+      "auto_escalate": false,
+      "description": "Too many requests. Retry-After header indicates when to resume."
+    },
+    "400_invalid_request": {
+      "http_status": 400,
+      "category": "config",
+      "known_causes": ["malformed_jwt_payload", "unsupported_algorithm", "missing_required_claim"],
+      "typical_resolution_minutes": 30,
+      "auto_escalate": false,
+      "description": "Request payload is malformed or missing required fields."
+    },
+    "500_internal_error": {
+      "http_status": 500,
+      "category": "server",
+      "known_causes": ["nexa_infra_issue"],
+      "typical_resolution_minutes": null,
+      "auto_escalate": true,
+      "description": "NexaAuth server error. Always escalate to engineering."
+    },
+    "503_service_unavailable": {
+      "http_status": 503,
+      "category": "server",
+      "known_causes": ["scheduled_maintenance", "overload", "deployment_in_progress"],
+      "typical_resolution_minutes": null,
+      "auto_escalate": true,
+      "description": "NexaAuth temporarily unavailable. Check status page."
+    }
+  },
+  "NexaStore": {
+    "403_access_denied": {
+      "http_status": 403,
+      "category": "auth",
+      "known_causes": ["bucket_policy_mismatch", "cors_origin_not_allowed", "presigned_url_expired", "legacy_acl_not_migrated"],
+      "typical_resolution_minutes": 25,
+      "auto_escalate": false,
+      "description": "Access to storage resource denied. Check bucket policy and CORS configuration."
+    },
+    "403_cors_blocked": {
+      "http_status": 403,
+      "category": "config",
+      "known_causes": ["origin_not_in_cors_list", "wildcard_origin_rejected", "missing_preflight_response"],
+      "typical_resolution_minutes": 15,
+      "auto_escalate": false,
+      "description": "CORS preflight rejected. Verify allowed origins in bucket CORS configuration."
+    },
+    "404_object_not_found": {
+      "http_status": 404,
+      "category": "data",
+      "known_causes": ["wrong_key_path", "bucket_region_mismatch", "object_deleted"],
+      "typical_resolution_minutes": 10,
+      "auto_escalate": false,
+      "description": "Object key does not exist in specified bucket."
+    },
+    "409_conflict": {
+      "http_status": 409,
+      "category": "data",
+      "known_causes": ["concurrent_write", "object_lock_enabled", "bucket_versioning_conflict"],
+      "typical_resolution_minutes": 20,
+      "auto_escalate": false,
+      "description": "Write conflict. Check for concurrent writes or object locking."
+    },
+    "413_payload_too_large": {
+      "http_status": 413,
+      "category": "config",
+      "known_causes": ["single_upload_limit_exceeded", "multipart_not_used"],
+      "typical_resolution_minutes": 20,
+      "auto_escalate": false,
+      "description": "Object exceeds single-upload limit (5GB). Use multipart upload API."
+    },
+    "429_rate_limit_exceeded": {
+      "http_status": 429,
+      "category": "rate_limit",
+      "known_causes": ["too_many_list_operations", "burst_upload_traffic"],
+      "typical_resolution_minutes": 5,
+      "auto_escalate": false,
+      "description": "Storage API rate limit exceeded. Implement backoff or contact support for limit increase."
+    },
+    "500_internal_error": {
+      "http_status": 500,
+      "category": "server",
+      "known_causes": ["nexa_infra_issue"],
+      "typical_resolution_minutes": null,
+      "auto_escalate": true,
+      "description": "NexaStore server error. Always escalate."
+    },
+    "503_service_unavailable": {
+      "http_status": 503,
+      "category": "server",
+      "known_causes": ["scheduled_maintenance", "regional_outage"],
+      "typical_resolution_minutes": null,
+      "auto_escalate": true,
+      "description": "NexaStore temporarily unavailable. Check status page."
+    }
+  },
+  "NexaMsg": {
+    "webhook_delivery_failure": {
+      "http_status": null,
+      "category": "connectivity",
+      "known_causes": ["endpoint_unreachable", "tls_handshake_failure", "timeout", "http_non_2xx_response", "active_incident"],
+      "typical_resolution_minutes": 30,
+      "auto_escalate": false,
+      "description": "Webhook delivery failed after retry attempts. Check endpoint availability and response codes."
+    },
+    "401_invalid_signature": {
+      "http_status": 401,
+      "category": "auth",
+      "known_causes": ["wrong_signing_secret", "payload_modified_in_transit", "signature_algorithm_mismatch"],
+      "typical_resolution_minutes": 15,
+      "auto_escalate": false,
+      "description": "Webhook signature validation failed. Verify signing secret matches configuration."
+    },
+    "429_message_rate_limit": {
+      "http_status": 429,
+      "category": "rate_limit",
+      "known_causes": ["topic_rate_limit_exceeded", "burst_publish_traffic"],
+      "typical_resolution_minutes": 5,
+      "auto_escalate": false,
+      "description": "Message publish rate limit exceeded for topic."
+    },
+    "400_invalid_payload": {
+      "http_status": 400,
+      "category": "config",
+      "known_causes": ["message_too_large", "invalid_json", "unsupported_content_type"],
+      "typical_resolution_minutes": 15,
+      "auto_escalate": false,
+      "description": "Message payload invalid. Check size limits and content type."
+    },
+    "404_topic_not_found": {
+      "http_status": 404,
+      "category": "config",
+      "known_causes": ["wrong_topic_name", "topic_deleted", "wrong_environment"],
+      "typical_resolution_minutes": 10,
+      "auto_escalate": false,
+      "description": "Topic does not exist. Verify topic name and environment."
+    },
+    "duplicate_message_delivery": {
+      "http_status": null,
+      "category": "data",
+      "known_causes": ["at_least_once_delivery_semantics", "missing_idempotency_check", "network_timeout_retry"],
+      "typical_resolution_minutes": 20,
+      "auto_escalate": false,
+      "description": "Message delivered multiple times. NexaMsg uses at-least-once delivery. Implement idempotency on consumer side."
+    },
+    "500_internal_error": {
+      "http_status": 500,
+      "category": "server",
+      "known_causes": ["nexa_infra_issue"],
+      "typical_resolution_minutes": null,
+      "auto_escalate": true,
+      "description": "NexaMsg server error. Always escalate."
+    },
+    "503_service_unavailable": {
+      "http_status": 503,
+      "category": "server",
+      "known_causes": ["scheduled_maintenance", "regional_outage"],
+      "typical_resolution_minutes": null,
+      "auto_escalate": true,
+      "description": "NexaMsg temporarily unavailable. Check status page and active incidents."
+    }
+  },
+  "NexaPay": {
+    "402_payment_declined": {
+      "http_status": 402,
+      "category": "data",
+      "known_causes": ["insufficient_funds", "card_declined_by_issuer", "fraud_detection_block", "incorrect_payment_details"],
+      "typical_resolution_minutes": 10,
+      "auto_escalate": false,
+      "description": "Payment declined by processor. Decline code in response body indicates reason."
+    },
+    "409_duplicate_payment": {
+      "http_status": 409,
+      "category": "data",
+      "known_causes": ["missing_idempotency_key", "idempotency_key_reused_with_different_params", "retry_without_key"],
+      "typical_resolution_minutes": 15,
+      "auto_escalate": false,
+      "description": "Duplicate payment detected. Always use Idempotency-Key header for payment requests."
+    },
+    "422_validation_error": {
+      "http_status": 422,
+      "category": "config",
+      "known_causes": ["invalid_iban", "unsupported_currency", "amount_out_of_range", "missing_required_field"],
+      "typical_resolution_minutes": 20,
+      "auto_escalate": false,
+      "description": "Payment request failed validation. Check currency support and field requirements."
+    },
+    "reconciliation_mismatch": {
+      "http_status": null,
+      "category": "data",
+      "known_causes": ["timezone_mismatch", "currency_conversion_rounding", "settlement_delay", "refund_not_reflected"],
+      "typical_resolution_minutes": 60,
+      "auto_escalate": false,
+      "description": "Reconciliation totals do not match. Common causes: timezone differences, settlement delays."
+    },
+    "429_rate_limit_exceeded": {
+      "http_status": 429,
+      "category": "rate_limit",
+      "known_causes": ["payment_processing_rate_exceeded", "fraud_detection_throttle"],
+      "typical_resolution_minutes": 30,
+      "auto_escalate": false,
+      "description": "Payment API rate limit exceeded. Contact support for limit increase if legitimate traffic."
+    },
+    "403_forbidden": {
+      "http_status": 403,
+      "category": "auth",
+      "known_causes": ["payment_method_not_enabled", "region_not_supported", "account_not_verified"],
+      "typical_resolution_minutes": 60,
+      "auto_escalate": true,
+      "description": "Payment operation forbidden. May require account configuration changes."
+    },
+    "500_internal_error": {
+      "http_status": 500,
+      "category": "server",
+      "known_causes": ["nexa_infra_issue", "payment_processor_error"],
+      "typical_resolution_minutes": null,
+      "auto_escalate": true,
+      "description": "NexaPay server error. Always escalate — may affect payment processing."
+    },
+    "503_service_unavailable": {
+      "http_status": 503,
+      "category": "server",
+      "known_causes": ["scheduled_maintenance", "payment_processor_outage"],
+      "typical_resolution_minutes": null,
+      "auto_escalate": true,
+      "description": "NexaPay temporarily unavailable. Check status page immediately — revenue impact."
+    }
+  }
+}

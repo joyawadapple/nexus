@@ -1,0 +1,36 @@
+# Core
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+python-multipart==0.0.20
+python-dotenv==1.0.1
+pydantic==2.10.4
+pydantic-settings==2.7.0
+
+# LLM
+anthropic==0.42.0
+
+# RAG
+sentence-transformers==3.3.1
+numpy==2.2.1
+
+# Sentiment
+vaderSentiment==3.3.2
+
+# Logging
+structlog==24.4.0
+
+# Utils
+httpx==0.28.1
+pytz==2024.2
+langdetect==1.0.9
+
+# LangGraph + LangSmith (optional — enabled via LANGSMITH_TRACING=true)
+langgraph>=0.2.0
+langsmith>=0.1.0
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.25.2
+
+# Dev tooling
+ruff>=0.9.0

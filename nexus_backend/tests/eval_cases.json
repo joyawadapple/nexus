@@ -1,0 +1,177 @@
+[
+    {
+      "id": "eval_001",
+      "name": "Platinum client 401 after key rotation — self resolve",
+      "client_id": "client_001",
+      "conversation": [
+        "My API calls are failing with 401 errors",
+        "NexaAuth — started 2 hours ago after we rotated our API keys, all production traffic is down",
+        "Redis — we use Redis for token caching",
+        "The cache purge worked, 401s are clearing"
+      ],
+      "expected": {
+        "ticket.client.tier": "platinum",
+        "ticket.issue.product": "NexaAuth",
+        "ticket.priority": "critical",
+        "ticket.status": "self_resolve",
+        "ticket.issue.environment": "production",
+        "ticket.diagnosis.confidence_min": 0.75,
+        "ticket.resolution.confidence_min": 0.75,
+        "ticket.confidence_breakdown.triage": 1.0,
+        "triage_runs_once": true,
+        "max_questions_per_turn": 2,
+        "resolution_started_after_diagnostic_threshold": true
+      }
+    },
+    {
+      "id": "eval_002",
+      "name": "Known incident — NexaMsg webhook failure",
+      "client_id": "client_002",
+      "conversation": [
+        "Our webhooks have stopped delivering completely",
+        "NexaMsg"
+      ],
+      "expected": {
+        "ticket.issue.known_incident": true,
+        "ticket.status": "escalated",
+        "ticket.priority": "high",
+        "diagnostic_agent_ran": false,
+        "resolution_agent_ran": false,
+        "escalation_agent_ran": true,
+        "turns_to_ticket": 2,
+        "ticket.escalation.decision": "escalated"
+      }
+    },
+    {
+      "id": "eval_003",
+      "name": "Recurring issue — Standard tier 3rd occurrence forces escalation",
+      "client_id": "client_003",
+      "conversation": [
+        "Same 429 rate limit issue again",
+        "NexaAuth",
+        "Production — all users affected",
+        "Consistent, every request fails",
+        "It started yesterday and keeps happening"
+      ],
+      "expected": {
+        "ticket.issue.recurring": true,
+        "ticket.status": "escalated",
+        "ticket.resolution.prevention_contains": "rate",
+        "meta.triage_recurring": true
+      }
+    },
+    {
+      "id": "eval_004",
+      "name": "Frustrated Platinum client — sentiment adjusts escalation",
+      "client_id": "client_001",
+      "conversation": [
+        "This is completely unacceptable, we are losing thousands of euros right now",
+        "NexaAuth — 429 rate limit but we are nowhere near our limits",
+        "Production — all users",
+        "Still happening, nothing has changed"
+      ],
+      "expected": {
+        "ticket.sentiment_analysis.detected": "frustrated",
+        "ticket.sentiment_analysis.tone_adjustment_applied": true,
+        "nexus_first_response_contains_empathy": true,
+        "escalation_threshold_lowered": true
+      }
+    },
+    {
+      "id": "eval_005",
+      "name": "Vague issue — low confidence forces escalation",
+      "client_id": "client_002",
+      "conversation": [
+        "Something is wrong with our storage",
+        "NexaStore",
+        "Not sure, maybe staging",
+        "It just says error sometimes",
+        "Just our internal team noticed it today"
+      ],
+      "expected": {
+        "ticket.confidence_breakdown.diagnostic_max": 0.65,
+        "ticket.status": "escalated",
+        "ticket.escalation.reason_contains": "confidence",
+        "ticket.priority": "medium"
+      }
+    },
+    {
+      "id": "eval_006",
+      "name": "Session isolation — switching clients produces independent sessions",
+      "client_id": "client_001",
+      "conversation": [
+        "My API calls are failing"
+      ],
+      "then_switch_to": "client_002",
+      "second_conversation": [
+        "Webhook delivery stopped"
+      ],
+      "expected": {
+        "session_1.ticket.client.company": "Acme Corp",
+        "session_2.ticket.client.company": "GlobalRetail SA",
+        "session_ids_different": true,
+        "no_state_bleed": true
+      }
+    },
+    {
+      "id": "eval_007",
+      "name": "Triage runs exactly once per session",
+      "client_id": "client_001",
+      "conversation": [
+        "API failing with 401",
+        "NexaAuth",
+        "Production",
+        "Started after key rotation"
+      ],
+      "expected": {
+        "meta.triage_run_count": 1,
+        "meta.triage_confidence_final_min": 0.9,
+        "triage_cached_after_completion": true
+      }
+    },
+    {
+      "id": "eval_008",
+      "name": "Platinum defaults to critical severity before environment confirmed",
+      "client_id": "client_001",
+      "conversation": [
+        "My API calls are failing with 401 errors"
+      ],
+      "expected": {
+        "meta.triage_severity_turn_1": "critical",
+        "ticket.client.tier": "platinum"
+      }
+    },
+    {
+      "id": "eval_009",
+      "name": "Question bundling never exceeds 2 per turn",
+      "client_id": "client_001",
+      "conversation": [
+        "I have an issue",
+        "Not sure what product",
+        "Maybe production"
+      ],
+      "expected": {
+        "max_questions_per_turn": 2,
+        "no_repeated_questions": true,
+        "asked_fields_never_repeated": true
+      }
+    },
+    {
+      "id": "eval_010",
+      "name": "Diagnostic confidence grows with each client confirmation",
+      "client_id": "client_001",
+      "conversation": [
+        "401 errors on NexaAuth",
+        "Production, all users, started after key rotation",
+        "Redis for caching",
+        "Cache purge returned 204 but still getting 401s"
+      ],
+      "expected": {
+        "meta.diagnostic_confidence_turn_1_max": 0.50,
+        "meta.diagnostic_confidence_turn_2_min": 0.55,
+        "meta.diagnostic_confidence_turn_3_min": 0.65,
+        "meta.diagnostic_confidence_turn_4_min": 0.75,
+        "resolution_only_starts_after_diagnostic_threshold": true
+      }
+    }
+  ]

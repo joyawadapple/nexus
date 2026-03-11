@@ -1,0 +1,37 @@
+# Secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Test / tooling cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+
+# Frontend build
+nexus_frontend/dist/
+
+# Generated runtime data
+nexus_backend/conversations/
+nexus_backend/tickets/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# LangGraph runtime state
+nexus_backend/.langgraph_api/
+
+# Logs
+*.log

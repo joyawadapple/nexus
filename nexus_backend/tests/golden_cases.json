@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Acme Corp Platinum — NexaAuth 401 after key rotation — self_resolve",
+    "description": "Platinum client with NexaAuth 401 after key rotation. High confidence diagnosis. Should self-resolve.",
+    "input": {
+      "client_id": "client_001",
+      "client_tier": "platinum",
+      "product": "NexaAuth",
+      "error_code": "401_invalid_token",
+      "environment": "production",
+      "started_at": "2 hours ago",
+      "impact_scope": "all_users",
+      "known_incident": false,
+      "recurring_count": 0,
+      "recent_changes": "API key rotation 2 hours ago",
+      "reproducibility": "consistent"
+    },
+    "expected_output": {
+      "status": "self_resolve",
+      "priority": "critical",
+      "triage_confidence_min": 0.90,
+      "diagnostic_confidence_min": 0.75,
+      "resolution_confidence_min": 0.80,
+      "resolution_steps_min": 2,
+      "should_cite_rag": true
+    }
+  },
+  {
+    "name": "GlobalRetail SA Gold — NexaStore 403 access denied — escalated",
+    "description": "Gold client with NexaStore 403 in production. Medium confidence. Should escalate for Gold+production.",
+    "input": {
+      "client_id": "client_002",
+      "client_tier": "gold",
+      "product": "NexaStore",
+      "error_code": "403_access_denied",
+      "environment": "production",
+      "started_at": "today",
+      "impact_scope": "all_users",
+      "known_incident": false,
+      "recurring_count": 0,
+      "recent_changes": null,
+      "reproducibility": "consistent"
+    },
+    "expected_output": {
+      "status": "escalated",
+      "priority": "high",
+      "triage_confidence_min": 0.80,
+      "diagnostic_confidence_min": 0.40,
+      "resolution_steps_min": 1,
+      "should_cite_rag": true
+    }
+  },
+  {
+    "name": "DevStartup Ltd Standard — NexaAuth 429 recurring (3rd occurrence) — escalated",
+    "description": "Standard client with 3rd occurrence of 429 rate limit. Recurring escalation rule triggers.",
+    "input": {
+      "client_id": "client_003",
+      "client_tier": "standard",
+      "product": "NexaAuth",
+      "error_code": "429_rate_limit_exceeded",
+      "environment": "production",
+      "started_at": "recently",
+      "impact_scope": "all_users",
+      "known_incident": false,
+      "recurring_count": 3,
+      "missing_product": false
+    },
+    "expected_output": {
+      "status": "escalated",
+      "priority": "high",
+      "escalation_reason_contains": "recurring"
+    }
+  },
+  {
+    "name": "GlobalRetail SA — NexaMsg active incident — known incident shortcut",
+    "description": "Client reports NexaMsg issue. Active incident in product_db. Should skip diagnostic, go straight to escalation.",
+    "input": {
+      "client_id": "client_002",
+      "client_tier": "gold",
+      "product": "NexaMsg",
+      "error_code": "webhook_delivery_failure",
+      "environment": "production",
+      "known_incident": true,
+      "missing_product": false
+    },
+    "expected_output": {
+      "status": "escalated",
+      "skip_diagnostic": true,
+      "triage_confidence_min": 1.0
+    }
+  },
+  {
+    "name": "Unknown client — missing product — collecting status",
+    "description": "Session where product is not yet identified. Should return collecting status and ask for product.",
+    "input": {
+      "client_id": "client_001",
+      "client_tier": "platinum",
+      "product": null,
+      "error_code": null,
+      "environment": "production",
+      "missing_product": true,
+      "known_incident": false
+    },
+    "expected_output": {
+      "status": "collecting",
+      "questions_should_include": "product",
+      "triage_confidence_max": 0.40
+    }
+  }
+]
